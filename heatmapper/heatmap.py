@@ -44,7 +44,7 @@ def generateMap(data):
     buf.seek(0)
 
     im = Image.open(buf)
-    return im
+    return im, buf
 
 def mapLoop():
     # create heat map

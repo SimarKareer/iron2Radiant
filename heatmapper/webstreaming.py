@@ -36,21 +36,25 @@ def detect_motion():
         x = np.zeros((100, 100))
         x[50, i] = 1
         heatmap_data = ndimage.filters.gaussian_filter(x, sigma=16)
-        frame = generateMap(heatmap_data)
+        frame, buffer = generateMap(heatmap_data)
         
-        i += 1
+        i += 2
+        if (i > 99):
+            i = 0
 
         # acquire the lock, set the output frame, and release the
         # lock
         with lock:
             outputFrame = frame.copy()
+            frame.close()
+            buffer.close()
 
 def generate():
     # grab global references to the output frame and lock variables
     global outputFrame, lock
     # loop over frames from the output stream
     while True:
-        time.sleep(0.25)
+        time.sleep(0.1)
         # wait until the lock is acquired
         with lock:
             # check if the output frame is available, otherwise skip
