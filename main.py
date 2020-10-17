@@ -1,3 +1,4 @@
 import util
 
-util.imToObs('./test_inputs/testMap.png')
+tmpImg = util.imgToMap('test_inputs/testMap.png')
+util.imToObs(tmpImg)
