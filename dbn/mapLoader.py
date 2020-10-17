@@ -16,6 +16,7 @@ def getGrid(map_name):
         if val == 255:
             grid[data == val] = 0
         else:
+            print(val, count)
             grid[data == val] = count
             count += 1 
     
@@ -40,6 +41,7 @@ def main():
     img = getGrid("bind100.png")
     gridToImg(img)
     print(getLegalPos(img)[:8])
+    # print(img[0], img[:,0])
 
 if __name__ == "__main__":
     main()

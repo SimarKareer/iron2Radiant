@@ -53,7 +53,13 @@ class JointParticleFilter:
     
 
     def timeElapse(self):
-
+        ''' [ [x,y], [x,y] ]'''
+        transformation = np.array([[-1, 1], [0, 1], [1, 1]
+                                   [-1, 0], [0, 0], [1, 0],
+                                   [-1, -1], [0, -1], [1, -1]])
+        # 9 is the flattened 3x3 array
+        posdistr = np.full((9, ), 1/9) # TODO: call transformation function based on agent, abilities, location, etc.
+        # choices = np.random.choice()
         
         # for i in range(len(self.particles)):
         #     newPosDist = self.getPositionDistribution(self.setGhostPosition(gameState, self.particles[i]))
