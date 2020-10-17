@@ -21,7 +21,7 @@ def getGrid(map_name):
     
     return grid
 
-def gridToImg(grid, factor=10):
+def gridToImg(grid, factor=50):
     grid = grid * grid * factor
     Image.fromarray(grid).save('temp.png')
     
