@@ -1,0 +1,1 @@
+Start the flask server using `python3 webstreaming.py`

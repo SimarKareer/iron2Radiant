@@ -1,0 +1,83 @@
+from heatmap import generateMap
+from flask import Response
+from flask import Flask
+from flask import render_template
+from scipy import ndimage
+import numpy as np
+import threading
+import argparse
+import datetime
+import time
+import io
+
+# initialize the output frame and a lock used to ensure thread-safe
+# exchanges of the output frames (useful when multiple browsers/tabs
+# are viewing the stream)
+outputFrame = None
+lock = threading.Lock()
+# initialize a flask object
+app = Flask(__name__)
+
+@app.route("/")
+def index():
+    # return the rendered template
+    return render_template("index.html")
+
+def detect_motion():
+    # grab global references to the video stream, output frame, and
+    # lock variables
+    global outputFrame, lock
+    # initialize the total number of frames read thus far
+
+    i = 0
+
+    # loop over frames from the video stream
+    while True:
+        x = np.zeros((100, 100))
+        x[50, i] = 1
+        heatmap_data = ndimage.filters.gaussian_filter(x, sigma=16)
+        frame = generateMap(heatmap_data)
+        
+        i += 1
+
+        # acquire the lock, set the output frame, and release the
+        # lock
+        with lock:
+            outputFrame = frame.copy()
+
+def generate():
+    # grab global references to the output frame and lock variables
+    global outputFrame, lock
+    # loop over frames from the output stream
+    while True:
+        time.sleep(0.25)
+        # wait until the lock is acquired
+        with lock:
+            # check if the output frame is available, otherwise skip
+            # the iteration of the loop
+            if outputFrame is None:
+                continue
+            # encode the frame in JPEG format
+            with io.BytesIO() as output:
+                outputFrame.save(output, format="JPEG")
+                encodedImage = output.getvalue()
+        # yield the output frame in the byte format
+        yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + 
+            bytearray(encodedImage) + b'\r\n')
+
+@app.route("/video_feed")
+def video_feed():
+    # return the response generated along with the specific media
+    # type (mime type)
+    return Response(generate(),
+        mimetype = "multipart/x-mixed-replace; boundary=frame")
+
+# check to see if this is the main thread of execution
+if __name__ == '__main__':
+    t = threading.Thread(target=detect_motion)
+    t.daemon = True
+    t.start()
+    # start the flask app
+    app.run(port=3000, debug=True,
+        threaded=True, use_reloader=False)
+
