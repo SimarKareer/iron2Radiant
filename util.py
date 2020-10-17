@@ -59,10 +59,10 @@ def imToObs(map_img, grid_shape, circle_radius, vis=False):
                 ratio = gray_image.shape[1] / float(resized_img.shape[1])
 
                 #Convert to edged image for checking
-            
                 e = cv2.Canny(resized_img, 10, 25)
                 match = cv2.matchTemplate(e, tmp, cv2.TM_CCORR)
                 (_, val_max, _, loc_max) = cv2.minMaxLoc(match)
+                #get the best for each scale sizing
                 if temp_found is None or val_max>temp_found[0]:
                     temp_found = (val_max, loc_max, ratio)
             #Get information from temp_found to compute x,y coordinate
