@@ -7,12 +7,14 @@ import math
 import numpy
 from skimage import data
 from skimage.feature import match_template
+from scipy import stats
 
 
 ENEMY_COLOR = [91, 85, 249]#[249, 85, 91]
 ME_COLOR = [194, 254, 255]
 FRIENDLY_COLOR = [252, 253, 152]
 GRAY = [146, 149, 146]
+VISION = [0,165,255]
 template_list = []
 for agent_template in os.listdir('./image_templates'):
     template_list.append((cv2.imread('./image_templates/' + agent_template), agent_template[:-4]))
@@ -70,8 +72,8 @@ def imToObs(map_img, grid_shape, circle_radius, vis=False):
                     temp_found = (val_max, loc_max, ratio)
             #Get information from temp_found to compute x,y coordinate
             (val_max, loc_max, r) = temp_found
-            # print(name, val_max)
-            if val_max < 0.55:
+            #print(name, val_max)
+            if val_max < 0.52:
                 continue
             (x_start, y_start) = (int(loc_max[0]), int(loc_max[1]))
             (x_end, y_end) = (int((loc_max[0] + width)), int((loc_max[1] + height)))
@@ -113,11 +115,49 @@ def imToObs(map_img, grid_shape, circle_radius, vis=False):
 
             # TODO: Locs are currently in image map coordinates, need to be converted to grid coordinates
             adjusted_x_pos = int((x_pos-14)/3.6)
-            adjusted_y_pos = int((y_pos-13)/3.6)
+            adjusted_y_pos = int((y_pos-14)/3.6)
             locs.append((name, adjusted_x_pos, adjusted_y_pos, min_degree))
+            
     except Exception as e:
         print(e)
-
+    print(locs)
     return locs
 
 
+def findVisionCones(map_img):
+    """
+    Take in a map image.  Return 2D array of True/False based on where vision cones are
+    """
+    map_img = map_img[14:-15, 14:-14]
+
+    white_lo=np.array([176,176,176])
+    white_hi=np.array([180,180,180])
+
+    # Mask image to only select whites
+    mask=cv2.inRange(map_img,white_lo,white_hi)
+
+    # Change image to black where we found white
+    map_img[mask>0]=VISION
+
+    cv2.imwrite("test_cell.png",map_img)
+
+    y_dim = 120
+    x_dim = 100
+    y_chunk = map_img.shape[0] / y_dim
+    x_chunk = map_img.shape[1] / x_dim
+    vision_cones = np.zeros([y_dim, x_dim])
+    for y in range(0, y_dim - 1):
+        for x in range(0, x_dim - 1):
+            cell = map_img[math.floor(y*y_chunk):math.floor(y*y_chunk + y_chunk), math.floor(x*x_chunk):math.floor(x*x_chunk + x_chunk)]
+            cv2.imwrite('cell_images/test_cell' + str(x) + ',' + str(y) + '.png', cell)
+            val_dict = {}
+            for row in cell:
+                for val in row:
+                    if tuple(val) in val_dict:
+                        val_dict[tuple(val)] += 1
+                    else:
+                        val_dict[tuple(val)] = 1
+            mode_val = list(max(val_dict, key = val_dict.get))
+            if mode_val == VISION:
+                vision_cones[y][x] = 1
+    return vision_cones

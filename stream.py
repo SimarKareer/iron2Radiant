@@ -16,8 +16,9 @@ def stream(ping):
         ret, frame = vid.read()
         if count % 20 == 0:
             map_img = util.imgToMap(np.array(frame))
-            locs = util.imToObs(map_img, None, 15, vis=False)
-            ping(locs, None)
+            locs = util.imToObs(map_img, None, 15, vis=True)
+            vision_cones = util.findVisionCones(map_img)
+            ping(locs, vision_cones)
         count += 1
 # open our out file. 
 #fname = "test.mpg"
