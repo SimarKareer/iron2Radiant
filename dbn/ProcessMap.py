@@ -1,6 +1,6 @@
 import pickle
 import numpy as np
-from mapLoader import getGrid
+from MapLoader import getGrid
     
 
 # Currently fixed movement to 1 since movement isn't computed shortest to longest distance
@@ -23,7 +23,7 @@ def preprocess(grid, path, movement=1, flag=0):
                     nxt = grid[y + h][x + w]
                     
                     # Don't allow moving in walls, onto boyes, xes one wax for teleport and heaven
-                    if not (nxt == 0 or (nxt == 3 and not h > 0) or (nxt == 2 and not w < 1) or nxt == 4):
+                    if not (nxt == 0 or (curr != 3 and nxt == 3 and not h > 0) or (curr == 2 and nxt == 2 and not w < 1) or nxt == 4):
                         if (nxt == 1 and x == 0):
                             allowed.append([97, 98])
                         elif (nxt == 1 and x == 0):
@@ -35,17 +35,18 @@ def preprocess(grid, path, movement=1, flag=0):
     
     # y, x
     # print('mapping', mapping[(30, 82)], grid[30][82], grid[30][81])
-    tester(mapping, (30, 82), grid)
+    tester(mapping, (22, 8), grid)
 
     with open(path, 'wb') as handle:
         pickle.dump(mapping, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 def tester(mapping, coord, grid):
+    ''' coords in y, x (rows, col) '''
     print('Start at ', coord, 'with color ', grid[coord[0]][coord[1]])
     for item in mapping[coord]:
         print('Allowed at ', item, 'with color ', grid[item[0]][item[1]])
             
 if __name__ == "__main__":
     name = 'bind100'
-    preprocess(getGrid(name + ".png"), name + ".db")
+    preprocess(getGrid("dbn/" + name + ".png"), "dbn/" + name + ".db")

@@ -2,9 +2,9 @@ from PIL import Image
 import numpy as np
 
 
-def getGrid(map_name):
+def getGrid(map_path):
     # load the image
-    image = Image.open(map_name)
+    image = Image.open(map_path)
     # convert image to numpy array
     data = np.asarray(image.convert('L'))
     unique_values = np.unique(data.flatten())
@@ -24,7 +24,7 @@ def getGrid(map_name):
 
 def gridToImg(grid, factor=50):
     grid = grid * grid * factor
-    Image.fromarray(grid).save('temp.png')
+    Image.fromarray(grid).save('dbn/temp.png')
     
 def getLegalPos(grid):
     # [ [x,y] ]
@@ -38,7 +38,7 @@ def getLegalPos(grid):
     return np.array(pos)
 
 def main():
-    img = getGrid("bind100.png")
+    img = getGrid("dbn/bind100.png")
     gridToImg(img)
     print(getLegalPos(img)[:8])
     # print(img[0], img[:,0])
