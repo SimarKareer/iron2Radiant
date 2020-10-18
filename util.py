@@ -135,29 +135,21 @@ def findVisionCones(map_img):
 
     # Mask image to only select whites
     mask=cv2.inRange(map_img,white_lo,white_hi)
-
-    # Change image to black where we found white
-    map_img[mask>0]=VISION
-
-    cv2.imwrite("test_cell.png",map_img)
-
     y_dim = 120
     x_dim = 100
-    y_chunk = map_img.shape[0] / y_dim
-    x_chunk = map_img.shape[1] / x_dim
-    vision_cones = np.zeros([y_dim, x_dim])
+    y_chunk = mask.shape[0] / y_dim
+    x_chunk = mask.shape[1] / x_dim
+    vision_cones1 = np.empty([y_dim, x_dim])
     for y in range(0, y_dim - 1):
         for x in range(0, x_dim - 1):
-            cell = map_img[math.floor(y*y_chunk):math.floor(y*y_chunk + y_chunk), math.floor(x*x_chunk):math.floor(x*x_chunk + x_chunk)]
-            cv2.imwrite('cell_images/test_cell' + str(x) + ',' + str(y) + '.png', cell)
-            val_dict = {}
-            for row in cell:
-                for val in row:
-                    if tuple(val) in val_dict:
-                        val_dict[tuple(val)] += 1
-                    else:
-                        val_dict[tuple(val)] = 1
-            mode_val = list(max(val_dict, key = val_dict.get))
-            if mode_val == VISION:
-                vision_cones[y][x] = 1
-    return vision_cones
+            cell = mask[math.floor(y*y_chunk):math.floor(y*y_chunk + y_chunk), math.floor(x*x_chunk):math.floor(x*x_chunk + x_chunk)]
+            cell_len = len(cell.flatten())
+            if np.sum(cell.flatten()) > cell_len/2:
+                vision_cones1[y][x] = 1
+
+    #print(np.linalg.norm(vision_cones1 -vision_cones))
+    '''from heatmap import generateMap
+    im, buf = generateMap(vision_cones1)
+    im.save('test_res.png')
+    print('generated')'''
+    return vision_cones1
