@@ -1,10 +1,11 @@
-from ObservationModels import sightDistribution, audioDistribution
-
+from dbn.ObservationModels import sightDistribution, audioDistribution
+import numpy as np
 
 class JointParticleFilter:
     def __init__(self, numParticles, gridSize):
         self.gridSize = gridSize
         self.initParticles(numParticles, gridSize)
+        self.legalPositions = []
 
     def observe(observations, gameState):
         """
@@ -53,13 +54,13 @@ class JointParticleFilter:
     
 
     def timeElapse(self):
-
+        print('time elapse')
         
         # for i in range(len(self.particles)):
         #     newPosDist = self.getPositionDistribution(self.setGhostPosition(gameState, self.particles[i]))
         #     self.particles[i] = util.sample(newPosDist)
 
-    def initParticles(self, numParticles, gridSize)
+    def initParticles(self, numParticles, gridSize):
         """
         return newly initialized particles
 
@@ -73,6 +74,6 @@ class JointParticleFilter:
         X, Y = gridSize
         
         # particles = np.zeros((numParticles, numParticles))
-        indices = np.random.choice(len(self.legalPositions), numParticles)
-        self.particles = self.legalPositions[indices].copy()
+        # indices = np.random.choice(len(self.legalPositions), numParticles)
+        # self.particles = self.legalPositions[indices].copy()
 

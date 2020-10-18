@@ -1,4 +1,6 @@
 from heatmap import generateMap
+from stream import stream
+from dbn.Game import Game
 from flask import Response
 from flask import Flask
 from flask import render_template
@@ -78,9 +80,14 @@ def video_feed():
 
 # check to see if this is the main thread of execution
 if __name__ == '__main__':
+    numParticles = 10
+    g = Game(numParticles)
     t = threading.Thread(target=detect_motion)
     t.daemon = True
     t.start()
+    s = threading.Thread(target=stream, args={'ping': g.tick})
+    s.daemon = True
+    s.start()
     # start the flask app
     app.run(port=3000, debug=True,
         threaded=True, use_reloader=False)

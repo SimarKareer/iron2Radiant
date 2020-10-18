@@ -12,9 +12,8 @@ from skimage.feature import match_template
 ENEMY_COLOR = [91, 85, 249]#[249, 85, 91]
 ME_COLOR = [194, 254, 255]
 template_list = []
-for agent_template in os.listdir('./templates'):
-    template_list.append(cv2.imread('./templates/' + agent_template))
-print(cv2.__version__)
+for agent_template in os.listdir('./image_templates'):
+    template_list.append(cv2.imread('./image_templates/' + agent_template))
 
 def imgToMap(img):
     """

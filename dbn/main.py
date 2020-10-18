@@ -1,4 +1,4 @@
-from Game import Game
+from dbn.Game import Game
 
 def main():
     game = Game(100)
