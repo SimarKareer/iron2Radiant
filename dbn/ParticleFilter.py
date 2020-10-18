@@ -7,43 +7,66 @@ class ParticleFilter:
         self.gridSize = gridSize
         self.numParticles = numParticles
         self.legalPositions = legalPositions
-        self.transitionFunction = TransitionFunction(transition_path)
-        self.particles = None
+        # print("HULOOOO?")
         self.initParticles(numParticles, gridSize)
+        self.transitionFunction = TransitionFunction(transition_path)
 
-    def observe(self, observations, gameState, visionCones):
+    def visionConeObserve(self, visionCones):
+        # print("TEST AHOWE")
+        allPossible = self.getBeliefDistribution()
+
+        totalWeight = 0
+
+        if self.particles is None:
+            print("reseting particles")
+            self.initParticles(self.numParticles, self.gridSize)
+
+        if visionCones is not None:
+            for i in range(len(self.particles)):
+                # print('vision cone', visionCones.shape, self.particles[i], i)
+                y, x = self.particles[i].astype(int)
+                if visionCones[y, x]:
+                    allPossible[y, x] = 0
+                else:
+                    totalWeight += allPossible[y, x]
+
+        allPossible = allPossible / np.sum(allPossible) #full grid size with probabilities
+        self.beliefs = allPossible
+
+        # print('Probabilities HELP', allPossible)
+        choices = np.random.choice(allPossible.size, self.numParticles, p=allPossible.flatten()) #Flattened probs
+        # print("samples", len(choices), "samples")
+        ## LOOK AT OTHER CODE
+        newParticles = np.zeros((self.numParticles, 2))
+        newParticles[:,0] = (choices / self.gridSize[1]).astype(int)
+        newParticles[:,1] = (choices % self.gridSize[1]).astype(int)
+        
+        self.particles = newParticles
+
+    def observe(self, observations):
         """
         let observations be (visual, sound)
 
         TODO: sound
         """
-        # visual, audio = observations
-        # visualEmission = sightDistribution(visual) # since this is perfect knowledge just update all particles
-        # soundEmission = audioDistribution(audio)
-        if observations:
+        totalWeight = 0
+        allPossible = np.zeros(self.gridSize)
+        visualEmission = None
+
+        if observations is not None:
             y, x, theta = observations
             visualEmission = np.array([y, x])
-            totalWeight = 0
 
             # For now this can start as just one players position
             # currPosition = gameState.getFriendlyPos() # TODO: FOR SOUND
 
-            allPossible = np.zeros(self.gridSize)
-
             for i in range(len(self.particles)):
                 # distFromParticle = util.euclideanDistance(self.particles[i], currPosition) TODO: Only for sound
                 weight = 1 if (self.particles[i] == visualEmission).all() else 0
-                # if (self.particles[i] == visualEmission).all():
-                    # print("GOT A MATCHING PARTICLE")
-                if visionCones is not None and self.particles[i] != visualEmission:
-                    for visionCone in visionCones:
-                        if visionCones[self.particles[i]]:
-                            weight=0
-                            break
-
-                totalWeight += weight
-                y, x = self.particles[i]
-                allPossible[int(y), int(x)] +=  weight
+                # totalWeight += weight
+                y, x = self.particles[i].astype(int)
+                allPossible[y, x] +=  weight
+        
         
         # newParticles = util.nSample(allPossible, None, self.numParticles)
         # newParticles = []
@@ -66,6 +89,8 @@ class ParticleFilter:
         newParticles = np.zeros((self.numParticles, 2))
         newParticles[:,1] = (choices / self.gridSize[1]).astype(int)
         newParticles[:,0] = (choices % self.gridSize[1]).astype(int)
+
+        print('YOLO AAAAAA')
         
         self.particles = newParticles
     
@@ -92,12 +117,27 @@ class ParticleFilter:
           essentially converts a list of particles into a belief distribution (a Counter object)
         """
         "*** YOUR CODE HERE ***"
-        distribution = np.zeros(self.gridSize)
+        # if self.particles is None:
+        #     self.initParticles(self.numParticles, self.gridSize)
+        print("PEEK PARTICLES ON GET BELIEF DIST",  self.particles[:5])
+        # for i in range(len(self.particles)):
+        #     if self.particles[i][0] >= 120 or self.particles[i][1] >= 100:
+        #         print("ILLEGAL PARTICLE IN BELIEF DIST")
 
-        # print('BELLL', self.particles)
+        distribution = np.zeros(self.gridSize)
 
         for i in range(len(self.particles)):
             y, x = self.particles[i].astype(int)
+            # if y >= 120:
+            #     y = 119
+            # if x >= 100:
+            #     x = 99
+            
+            if y >= 120 or x >= 100:
+                index = np.random.choice(len(self.legalPositions))
+                self.particles[i] = self.legalPositions[index]
+                y, x = self.particles[i].astype(int)
+                # print('ILLEGAL', self.particles[i])
             distribution[y][x] += 1
 
         distribution /= distribution.sum()
@@ -126,8 +166,17 @@ class ParticleFilter:
         X, Y = gridSize
 
         print('legal shape', self.legalPositions.shape)
+
+        for i in range(len(self.legalPositions)):
+            if self.legalPositions[i][0] >= 120 or self.legalPositions[i][1] >= 100:
+                print('Illegal pos at ', self.legalPositions[i], i)
         
         particles = np.zeros((numParticles, 2))
         indices = np.random.choice(len(self.legalPositions), numParticles)
         self.particles = self.legalPositions[indices].copy().astype(int)
+        for i in range(len(self.particles)):
+            if self.particles[i][0] >= 120 or self.particles[i][1] >= 100:
+                print("ILLEGAL PARTICLE")
+
+        print("PEEK PARTICLES ON INIT PARTICLES",  self.particles[:5])
 

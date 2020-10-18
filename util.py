@@ -139,7 +139,7 @@ def findVisionCones(map_img):
     # Change image to black where we found white
     map_img[mask>0]=VISION
 
-    cv2.imwrite("test_cell.png",map_img)
+    # cv2.imwrite("test_cell.png",map_img)
 
     y_dim = 120
     x_dim = 100
@@ -149,7 +149,7 @@ def findVisionCones(map_img):
     for y in range(0, y_dim - 1):
         for x in range(0, x_dim - 1):
             cell = map_img[math.floor(y*y_chunk):math.floor(y*y_chunk + y_chunk), math.floor(x*x_chunk):math.floor(x*x_chunk + x_chunk)]
-            cv2.imwrite('cell_images/test_cell' + str(x) + ',' + str(y) + '.png', cell)
+            # cv2.imwrite('cell_images/test_cell' + str(x) + ',' + str(y) + '.png', cell)
             val_dict = {}
             for row in cell:
                 for val in row:

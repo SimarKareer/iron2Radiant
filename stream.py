@@ -4,6 +4,7 @@ import util
 import matplotlib.pyplot as plt
 import cv2
 import numpy as np
+from datetime import datetime
 
 # use live streamer to figure out the stream info
 def stream(ping):
@@ -17,7 +18,9 @@ def stream(ping):
         if count % 20 == 0:
             map_img = util.imgToMap(np.array(frame))
             locs = util.imToObs(map_img, None, 15, vis=True)
+            now = datetime.now()
             vision_cones = util.findVisionCones(map_img)
+            print((datetime.now()-now).total_seconds())
             ping(locs, vision_cones)
         count += 1
 # open our out file. 
