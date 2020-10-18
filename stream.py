@@ -16,7 +16,7 @@ def stream(ping):
         ret, frame = vid.read()
         if count % 20 == 0:
             map_img = util.imgToMap(np.array(frame))
-            locs = util.imToObs(map_img, None, 15, vis=True)
+            locs = util.imToObs(map_img, None, 15, vis=False)
             ping(locs, None)
         count += 1
 # open our out file. 

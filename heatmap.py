@@ -13,7 +13,7 @@ def generateMap(data):
                 (1.0, 1.0, 1.0))
 
     # get the map image as an array so we can plot it 
-    map_img = matplotlib.image.imread('map.png') 
+    map_img = matplotlib.image.imread('rsz_map.png') 
 
     sns.set()
     matplotlib.pyplot.figure(figsize=(10,10))

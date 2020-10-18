@@ -44,7 +44,7 @@ def detect_motion(game):
             if name == "sage":
                 hardCodeAgent = heatmap
 
-        print(hardCodeAgent)
+        # print(hardCodeAgent)
 
         frame, buffer = generateMap(hardCodeAgent)
         
@@ -88,7 +88,7 @@ def video_feed():
 
 # check to see if this is the main thread of execution
 if __name__ == '__main__':
-    numParticles = 100
+    numParticles = 1569
     g = Game('./dbn/bind100.png', numParticles, ['omen', 'sage'])
     t = threading.Thread(target=detect_motion, args=[g])
     t.daemon = True

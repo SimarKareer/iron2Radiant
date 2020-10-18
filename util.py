@@ -70,7 +70,7 @@ def imToObs(map_img, grid_shape, circle_radius, vis=False):
                     temp_found = (val_max, loc_max, ratio)
             #Get information from temp_found to compute x,y coordinate
             (val_max, loc_max, r) = temp_found
-            print(name, val_max)
+            # print(name, val_max)
             if val_max < 0.55:
                 continue
             (x_start, y_start) = (int(loc_max[0]), int(loc_max[1]))

@@ -11,6 +11,8 @@ class TransitionFunction:
     def getPosDist(self, coord, mode='uniform'):
         ''' coord is (y, x) '''
         if mode == 'uniform':
+            # TODO: fix locs null case
+            # print("IN GET POS DIST", coord)
             locs = self.map.get(coord)
             probs = np.ones(len(locs)) / len(locs)
             return locs, probs
