@@ -25,7 +25,7 @@ def index():
     # return the rendered template
     return render_template("index.html")
 
-def detect_motion():
+def detect_motion(game):
     # grab global references to the video stream, output frame, and
     # lock variables
     global outputFrame, lock
@@ -35,9 +35,9 @@ def detect_motion():
 
     # loop over frames from the video stream
     while True:
-        x = np.zeros((100, 100))
-        x[50, i] = 1
-        heatmap_data = ndimage.filters.gaussian_filter(x, sigma=16)
+        # x = np.zeros((100, 100))
+        # x[50, i] = 1
+        heatmap_data = g.getBeliefDist()[0] #ndimage.filters.gaussian_filter(x, sigma=16)
         frame, buffer = generateMap(heatmap_data)
         
         i += 2
@@ -80,12 +80,12 @@ def video_feed():
 
 # check to see if this is the main thread of execution
 if __name__ == '__main__':
-    numParticles = 10
-    g = Game(numParticles)
-    t = threading.Thread(target=detect_motion)
+    numParticles = 100
+    g = Game('./dbn/bind100.png', numParticles, ['omen'])
+    t = threading.Thread(target=detect_motion, args=[g])
     t.daemon = True
     t.start()
-    s = threading.Thread(target=stream, args={'ping': g.tick})
+    s = threading.Thread(target=stream, args=[g.tick])
     s.daemon = True
     s.start()
     # start the flask app

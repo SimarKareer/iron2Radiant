@@ -1,13 +1,13 @@
-from ObservationModels import sightDistribution, audioDistribution
-from TransitionFunctions import TransitionFunction
+from dbn.ObservationModels import sightDistribution, audioDistribution
+from dbn.TransitionFunctions import TransitionFunction
 import numpy as np
 
 class ParticleFilter:
     def __init__(self, numParticles, gridSize, transition_path, legalPositions):
         self.gridSize = gridSize
-        self.initParticles(numParticles, gridSize)
         self.legalPositions = legalPositions
         self.transitionFunction = TransitionFunction(transition_path)
+        self.initParticles(numParticles, gridSize)
 
     def observe(observations, gameState, visionCones):
         """

@@ -7,7 +7,7 @@ import numpy as np
 
 # use live streamer to figure out the stream info
 def stream(ping):
-    streams = streamlink.streams("http://www.twitch.tv/Galaxspheria")
+    streams = streamlink.streams("https://www.twitch.tv/tenz")
     stream = streams['best']
     vid = cv2.VideoCapture(stream.url)
     ret, frame = vid.read()
@@ -17,8 +17,7 @@ def stream(ping):
         if count % 20 == 0:
             map_img = util.imgToMap(np.array(frame))
             locs = util.imToObs(map_img, None, 15, vis=True)
-            ping(locs)
-            print(type(ping))
+            ping(locs, None)
         count += 1
 # open our out file. 
 #fname = "test.mpg"

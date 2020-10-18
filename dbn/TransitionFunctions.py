@@ -1,11 +1,10 @@
 import numpy as np
+import pickle
 
 # 0 wall, 1 normal, 2 blue, 3 red, 4 green
 
 class TransitionFunction:
     def __init__(self, transition_path):
-        self.flag = flag
-
         with open(transition_path, 'rb') as handle:
             self.map = pickle.load(handle)
 
