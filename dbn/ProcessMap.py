@@ -6,7 +6,7 @@ from dbn.MapLoader import getGrid
 # Currently fixed movement to 1 since movement isn't computed shortest to longest distance
 # Otherwise, could move through walls
 # Future flag can be used to generate function per agent
-def preprocess(grid, path, movement=2, flag=0):
+def preprocess(grid, path, movement=1, flag=0):
     mapping = {}
 
     for y in range(grid.shape[0]):

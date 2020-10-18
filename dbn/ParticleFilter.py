@@ -23,6 +23,7 @@ class ParticleFilter:
             print("reseting particles")
             self.initParticles(self.numParticles, self.gridSize)
 
+
         if visionCones is not None:
             for i in range(len(self.particles)):
                 # print('vision cone', visionCones.shape, self.particles[i], i)
