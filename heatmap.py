@@ -7,10 +7,14 @@ from scipy import ndimage
 from PIL import Image
 
 def generateMap(data):
-    wd = matplotlib.cm.winter._segmentdata # only has r,g,b  
-    wd['alpha'] =  ((0.0, 0.0, 0.3), 
-                (0.3, 0.3, 1.0),
-                (1.0, 1.0, 1.0))
+    wd = matplotlib.cm.plasma #._segmentdata # only has r,g,b  
+    # wd['alpha'] =  ((0.0, 0.0, 0.3), 
+    #             (0.3, 0.3, 1.0),
+    #             (1.0, 1.0, 1.0))
+    cmap = wd(np.arange(wd.N))
+    cmap[:,-1] = np.linspace(0, 1, wd.N)
+    cmap = matplotlib.colors.ListedColormap(cmap)
+    
 
     # get the map image as an array so we can plot it 
     map_img = matplotlib.image.imread('rsz_map.png') 
@@ -18,7 +22,7 @@ def generateMap(data):
     sns.set()
     matplotlib.pyplot.figure(figsize=(10,10))
     hmax = sns.heatmap(data,
-                cmap = matplotlib.cm.winter,
+                cmap = cmap,
                 alpha = 0.3, # whole heatmap is translucent
                 zorder = 2,
                 cbar = False,
