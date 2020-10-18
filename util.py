@@ -111,7 +111,9 @@ def imToObs(map_img, grid_shape, circle_radius, vis=False):
                 cv2.imwrite('res.png', map_img)
 
             # TODO: Locs are currently in image map coordinates, need to be converted to grid coordinates
-            locs.append((name, x_pos, y_pos, min_degree))
+            adjusted_x_pos = int((x_pos-14)/3.6)
+            adjusted_y_pos = int((y_pos-13)/3.6)
+            locs.append((name, adjusted_x_pos, adjusted_y_pos, min_degree))
     except Exception as e:
         print(e)
 
