@@ -9,7 +9,7 @@ class ParticleFilter:
         self.legalPositions = legalPositions
         self.transitionFunction = TransitionFunction(transition_path)
 
-    def observe(observations, gameState):
+    def observe(observations, gameState, visionCones):
         """
         let observations be (visual, sound)
 
@@ -31,6 +31,12 @@ class ParticleFilter:
             for i in range(len(self.particles)):
                 # distFromParticle = util.euclideanDistance(self.particles[i], currPosition) TODO: Only for sound
                 weight = 1 if self.particles[i] == visualEmission else 0
+                if visionCones is not None and self.particles[i] != visualEmission:
+                    for visionCone in visionCones:
+                        if visionCones[self.particles[i]]:
+                            weight=0
+                            break
+
                 totalWeight += weight
                 allPossible[self.particles[i]] +=  weight
         
