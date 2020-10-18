@@ -14,6 +14,8 @@ class ParticleFilter:
     def visionConeObserve(self, visionCones):
         # print("TEST AHOWE")
         allPossible = self.getBeliefDistribution()
+        # print('PPPP', self.particles)
+        # print((allPossible == 0).sum())
 
         totalWeight = 0
 
@@ -90,14 +92,14 @@ class ParticleFilter:
         newParticles[:,1] = (choices / self.gridSize[1]).astype(int)
         newParticles[:,0] = (choices % self.gridSize[1]).astype(int)
 
-        print('YOLO AAAAAA')
+        # print('YOLO AAAAAA')
         
         self.particles = newParticles
     
 
     def timeElapse(self):
         ''' [ [x,y], [x,y] ]'''
-        print('particle length', len(self.particles))
+        # print('particle length', len(self.particles))
         for i in range(len(self.particles)):
             y, x  = self.particles[i]
             posDist, probs = self.transitionFunction.getPosDist((int(y), int(x)))
@@ -119,7 +121,7 @@ class ParticleFilter:
         "*** YOUR CODE HERE ***"
         # if self.particles is None:
         #     self.initParticles(self.numParticles, self.gridSize)
-        print("PEEK PARTICLES ON GET BELIEF DIST",  self.particles[:5])
+        # print("PEEK PARTICLES ON GET BELIEF DIST",  self.particles[:5])
         # for i in range(len(self.particles)):
         #     if self.particles[i][0] >= 120 or self.particles[i][1] >= 100:
         #         print("ILLEGAL PARTICLE IN BELIEF DIST")
@@ -155,6 +157,7 @@ class ParticleFilter:
             [x, y]
         ]
         """
+        print("INIT PARTICLE CALL")
 
         if visualEmission is not None:
             particles = np.ones((numParticles, 2))
