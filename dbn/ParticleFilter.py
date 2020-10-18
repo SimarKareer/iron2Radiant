@@ -5,11 +5,12 @@ import numpy as np
 class ParticleFilter:
     def __init__(self, numParticles, gridSize, transition_path, legalPositions):
         self.gridSize = gridSize
+        self.numParticles = numParticles
         self.legalPositions = legalPositions
         self.transitionFunction = TransitionFunction(transition_path)
         self.initParticles(numParticles, gridSize)
 
-    def observe(observations, gameState, visionCones):
+    def observe(self, observations, gameState, visionCones):
         """
         let observations be (visual, sound)
 
@@ -30,7 +31,7 @@ class ParticleFilter:
 
             for i in range(len(self.particles)):
                 # distFromParticle = util.euclideanDistance(self.particles[i], currPosition) TODO: Only for sound
-                weight = 1 if self.particles[i] == visualEmission else 0
+                weight = 1 if (self.particles[i] == visualEmission).all() else 0
                 if visionCones is not None and self.particles[i] != visualEmission:
                     for visionCone in visionCones:
                         if visionCones[self.particles[i]]:
@@ -67,7 +68,14 @@ class ParticleFilter:
         for i in range(len(self.particles)):
             x, y  = self.particles[i]
             posDist, probs = self.transitionFunction.getPosDist((x, y))
-            self.particles[i] = np.random.choice(posDist, p=probs)
+
+            # print(posDist, (x, y))
+            if len(posDist) == 0:
+                self.particles[i] = self.particles[i-1]
+                print("lost a particle somewhere")
+            else:
+                index = np.random.choice(len(posDist), p=probs)
+                self.particles[i] = posDist[index]
 
 
     def getBeliefDistribution(self):
@@ -77,12 +85,14 @@ class ParticleFilter:
           essentially converts a list of particles into a belief distribution (a Counter object)
         """
         "*** YOUR CODE HERE ***"
+        print("calling get belief distribution")
         distribution = np.zeros(self.gridSize)
 
         for particle in self.particles:
             distribution[particle] += 1
 
         distribution /= distribution.sum()
+        print(distribution)
 
         return distribution
 

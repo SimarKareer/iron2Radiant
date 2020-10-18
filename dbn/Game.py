@@ -14,9 +14,9 @@ class Game:
             name, x, y, theta = observation
             if name[-1] == "r":
                 name = name[:-2]
-                self.particleFilters[name].observe((x, y, theta), visionCones)
-                self.particleFilter.timeElapse()
+                self.particleFilters[name].observe((x, y, theta), None, visionCones)
+                self.particleFilters[name].timeElapse()
 
     def getBeliefDist(self):
-        return [particleFilter.getBeliefDistribution() for particleFilter in self.particleFilters.values()]
+        return [(name, particleFilter.getBeliefDistribution()) for name, particleFilter in self.particleFilters.items()]
 

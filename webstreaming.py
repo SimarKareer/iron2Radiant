@@ -37,8 +37,16 @@ def detect_motion(game):
     while True:
         # x = np.zeros((100, 100))
         # x[50, i] = 1
-        heatmap_data = g.getBeliefDist()[0] #ndimage.filters.gaussian_filter(x, sigma=16)
-        frame, buffer = generateMap(heatmap_data)
+        heatmap_data = g.getBeliefDist() #ndimage.filters.gaussian_filter(x, sigma=16)
+
+        hardCodeAgent = None
+        for name, heatmap in heatmap_data:
+            if name == "sage":
+                hardCodeAgent = heatmap
+
+        print(hardCodeAgent)
+
+        frame, buffer = generateMap(hardCodeAgent)
         
         i += 2
         if (i > 99):
@@ -81,7 +89,7 @@ def video_feed():
 # check to see if this is the main thread of execution
 if __name__ == '__main__':
     numParticles = 100
-    g = Game('./dbn/bind100.png', numParticles, ['omen'])
+    g = Game('./dbn/bind100.png', numParticles, ['omen', 'sage'])
     t = threading.Thread(target=detect_motion, args=[g])
     t.daemon = True
     t.start()
