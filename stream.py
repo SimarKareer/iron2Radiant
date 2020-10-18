@@ -7,7 +7,7 @@ import numpy as np
 
 # use live streamer to figure out the stream info
 def stream(ping):
-    streams = streamlink.streams("https://www.twitch.tv/tenz")
+    streams = streamlink.streams("http://www.twitch.tv/Galaxspheria")
     stream = streams['best']
     vid = cv2.VideoCapture(stream.url)
     ret, frame = vid.read()
